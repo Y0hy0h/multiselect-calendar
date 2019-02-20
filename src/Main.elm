@@ -82,34 +82,58 @@ update msg model =
 
 
 type DatesMsg
+    = CombinedActionMsg DateAction (Maybe MonthAction)
+    | MonthActionMsg MonthAction
+
+
+type DateAction
     = Add Date
     | Remove Date
-    | PreviousMonth
+
+
+type MonthAction
+    = PreviousMonth
     | NextMonth
 
 
 updateDates : DatesMsg -> DatesModel -> ( DatesModel, Cmd Msg )
 updateDates msg model =
+    case msg of
+        CombinedActionMsg dateAction maybeMonthAction ->
+            let
+                ( dateModel, dateCmd ) =
+                    case dateAction of
+                        Add newDate ->
+                            ( { model | selected = model.selected ++ [ newDate ] }, Cmd.none )
+
+                        Remove oldDate ->
+                            let
+                                newSelected =
+                                    List.remove oldDate model.selected
+                            in
+                            ( { model | selected = newSelected }, Cmd.none )
+            in
+            ( updateMonth maybeMonthAction dateModel, dateCmd )
+
+        MonthActionMsg monthAction ->
+            ( updateMonth (Just monthAction) model, Cmd.none )
+
+
+updateMonth : Maybe MonthAction -> DatesModel -> DatesModel
+updateMonth maybeMonthAction model =
     let
         moveMonth step month =
             Date.add Date.Months step month
     in
-    case msg of
-        Add newDate ->
-            ( { model | selected = model.selected ++ [ newDate ] }, Cmd.none )
+    case maybeMonthAction of
+        Just PreviousMonth ->
+            { model | month = moveMonth -1 model.month }
 
-        Remove oldDate ->
-            let
-                newSelected =
-                    List.remove oldDate model.selected
-            in
-            ( { model | selected = newSelected }, Cmd.none )
+        Just NextMonth ->
+            { model | month = moveMonth 1 model.month }
 
-        PreviousMonth ->
-            ( { model | month = moveMonth -1 model.month }, Cmd.none )
-
-        NextMonth ->
-            ( { model | month = moveMonth 1 model.month }, Cmd.none )
+        Nothing ->
+            model
 
 
 
@@ -131,8 +155,8 @@ viewDates : DatesModel -> Html DatesMsg
 viewDates model =
     div []
         [ div []
-            [ button [ onClick PreviousMonth ] [ text "^" ]
-            , button [ onClick NextMonth ] [ text "v" ]
+            [ button [ onClick (MonthActionMsg PreviousMonth) ] [ text "^" ]
+            , button [ onClick (MonthActionMsg NextMonth) ] [ text "v" ]
             , text (Date.format "MMMM y" model.month)
             ]
         , viewCalendar model
@@ -186,18 +210,18 @@ viewCalendar model =
 viewCalendarDay : { today : Bool, selected : Bool } -> Calendar.CalendarDate -> Html DatesMsg
 viewCalendarDay is day =
     let
-        ( dayClass, dayDate ) =
+        ( dayClass, dayDate, maybeMonthAction ) =
             case day of
                 Calendar.Previous date ->
-                    ( "previous", date )
+                    ( "previous", date, Just PreviousMonth )
 
                 Calendar.Current date ->
-                    ( "current", date )
+                    ( "current", date, Nothing )
 
                 Calendar.Next date ->
-                    ( "next", date )
+                    ( "next", date, Just NextMonth )
 
-        action =
+        dateAction =
             if is.selected then
                 Remove dayDate
 
@@ -210,7 +234,7 @@ viewCalendarDay is day =
             , ( "today", is.today )
             , ( "selected", is.selected )
             ]
-        , onClick action
+        , onClick (CombinedActionMsg dateAction maybeMonthAction)
         ]
         [ text (String.fromInt <| Date.day dayDate)
         ]
