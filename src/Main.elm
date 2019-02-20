@@ -3,7 +3,7 @@ module Main exposing (main)
 import Browser
 import Calendar
 import Date exposing (Date)
-import Html exposing (Html, table, tbody, td, text, th, thead, tr)
+import Html exposing (Html, button, div, table, tbody, td, text, th, thead, tr)
 import Html.Attributes exposing (classList)
 import Html.Events exposing (onClick)
 import List.Extra as List
@@ -31,6 +31,7 @@ type Model
 
 type alias DatesModel =
     { today : Date
+    , month : Date
     , selected : List Date
     }
 
@@ -62,7 +63,13 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         SetToday todayDate ->
-            ( Loaded { today = todayDate, selected = [] }, Cmd.none )
+            ( Loaded
+                { today = todayDate
+                , month = Date.floor Date.Month todayDate
+                , selected = []
+                }
+            , Cmd.none
+            )
 
         DatesMsg datesMsg ->
             case model of
@@ -77,10 +84,16 @@ update msg model =
 type DatesMsg
     = Add Date
     | Remove Date
+    | PreviousMonth
+    | NextMonth
 
 
 updateDates : DatesMsg -> DatesModel -> ( DatesModel, Cmd Msg )
 updateDates msg model =
+    let
+        moveMonth step month =
+            Date.add Date.Months step month
+    in
     case msg of
         Add newDate ->
             ( { model | selected = model.selected ++ [ newDate ] }, Cmd.none )
@@ -91,6 +104,12 @@ updateDates msg model =
                     List.remove oldDate model.selected
             in
             ( { model | selected = newSelected }, Cmd.none )
+
+        PreviousMonth ->
+            ( { model | month = moveMonth -1 model.month }, Cmd.none )
+
+        NextMonth ->
+            ( { model | month = moveMonth 1 model.month }, Cmd.none )
 
 
 
@@ -110,14 +129,21 @@ view model =
 
 viewDates : DatesModel -> Html DatesMsg
 viewDates model =
-    viewCalendar model
+    div []
+        [ div []
+            [ button [ onClick PreviousMonth ] [ text "^" ]
+            , button [ onClick NextMonth ] [ text "v" ]
+            , text (Date.format "MMMM y" model.month)
+            ]
+        , viewCalendar model
+        ]
 
 
 viewCalendar : DatesModel -> Html DatesMsg
 viewCalendar model =
     let
         calendar =
-            Calendar.forMonth (Date.year model.today) (Date.month model.today)
+            Calendar.forMonth (Date.year model.month) (Date.month model.month)
     in
     table []
         [ thead []
