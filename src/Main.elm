@@ -5,6 +5,8 @@ import Calendar
 import Date exposing (Date)
 import Html exposing (Html, table, tbody, td, text, th, thead, tr)
 import Html.Attributes exposing (classList)
+import Html.Events exposing (onClick)
+import List.Extra as List
 import Task
 import Time
 
@@ -84,7 +86,11 @@ updateDates msg model =
             ( { model | selected = model.selected ++ [ newDate ] }, Cmd.none )
 
         Remove oldDate ->
-            ( model, Cmd.none )
+            let
+                newSelected =
+                    List.remove oldDate model.selected
+            in
+            ( { model | selected = newSelected }, Cmd.none )
 
 
 
@@ -99,19 +105,20 @@ view model =
 
         Loaded datesModel ->
             viewDates datesModel
+                |> Html.map DatesMsg
 
 
-viewDates : DatesModel -> Html Msg
+viewDates : DatesModel -> Html DatesMsg
 viewDates model =
+    viewCalendar model
+
+
+viewCalendar : DatesModel -> Html DatesMsg
+viewCalendar model =
     let
         calendar =
             Calendar.forMonth (Date.year model.today) (Date.month model.today)
     in
-    viewCalendar calendar model.today
-
-
-viewCalendar : Calendar.CalendarMonth -> Date -> Html Msg
-viewCalendar calendar today =
     table []
         [ thead []
             [ tr []
@@ -133,12 +140,14 @@ viewCalendar calendar today =
                                 let
                                     date =
                                         Calendar.dateFromCalendarDate day
-                                in
-                                if date == today then
-                                    viewCalendarDay [ "today" ] day
 
-                                else
-                                    viewCalendarDay [] day
+                                    isToday =
+                                        date == model.today
+
+                                    isSelected =
+                                        List.member date model.selected
+                                in
+                                viewCalendarDay { today = isToday, selected = isSelected } day
                             )
                             week
                         )
@@ -148,8 +157,8 @@ viewCalendar calendar today =
         ]
 
 
-viewCalendarDay : List String -> Calendar.CalendarDate -> Html Msg
-viewCalendarDay extraClasses day =
+viewCalendarDay : { today : Bool, selected : Bool } -> Calendar.CalendarDate -> Html DatesMsg
+viewCalendarDay is day =
     let
         ( dayClass, dayDate ) =
             case day of
@@ -161,7 +170,21 @@ viewCalendarDay extraClasses day =
 
                 Calendar.Next date ->
                     ( "next", date )
+
+        action =
+            if is.selected then
+                Remove dayDate
+
+            else
+                Add dayDate
     in
-    td [ classList (List.map (\className -> ( className, True )) <| [ dayClass ] ++ extraClasses) ]
+    td
+        [ classList
+            [ ( dayClass, True )
+            , ( "today", is.today )
+            , ( "selected", is.selected )
+            ]
+        , onClick action
+        ]
         [ text (String.fromInt <| Date.day dayDate)
         ]
