@@ -4,6 +4,7 @@ import Browser
 import Calendar
 import Date exposing (Date)
 import Html exposing (Html, table, tbody, td, text, th, thead, tr)
+import Html.Attributes exposing (class)
 import Task
 import Time
 
@@ -122,13 +123,27 @@ viewDates model =
             (List.map
                 (\week ->
                     tr []
-                        (List.map
-                            (\day ->
-                                td [] [ text (String.fromInt <| Date.day day) ]
-                            )
-                            week
-                        )
+                        (List.map viewCalendarDay week)
                 )
                 calendar
             )
+        ]
+
+
+viewCalendarDay : Calendar.CalendarDate -> Html Msg
+viewCalendarDay day =
+    let
+        ( dayClass, dayDate ) =
+            case day of
+                Calendar.Previous date ->
+                    ( "previous", date )
+
+                Calendar.Current date ->
+                    ( "current", date )
+
+                Calendar.Next date ->
+                    ( "next", date )
+    in
+    td [ class dayClass ]
+        [ text (String.fromInt <| Date.day dayDate)
         ]
