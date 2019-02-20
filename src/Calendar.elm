@@ -53,12 +53,14 @@ calendarMonthDays year month =
 
         start =
             firstOfSameWeek beginningOfMonth
+                |> Date.add Date.Weeks -1
 
         untilEndOfMonth =
             Date.add Date.Months 1 beginningOfMonth
 
         until =
             lastOfSameWeek untilEndOfMonth
+                |> Date.add Date.Weeks 1
 
         previous =
             Date.range Date.Day 1 start beginningOfMonth
