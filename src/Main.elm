@@ -104,9 +104,7 @@ viewDates : DatesModel -> Html Msg
 viewDates model =
     let
         calendar =
-            Calendar.forMonth (Date.year model.today) Time.Mar
-
-        {- (Date.month model.today) -}
+            Calendar.forMonth (Date.year model.today) (Date.month model.today)
     in
     table []
         [ thead []
