@@ -4,11 +4,30 @@ import Date exposing (Date)
 
 
 type alias CalendarMonth =
-    List Date
+    List (List Date)
 
 
 forMonth : Int -> Date.Month -> CalendarMonth
 forMonth year month =
+    let
+        days =
+            calendarMonthDays year month
+    in
+    List.foldl
+        (\day ( week, result ) ->
+            if List.length week < 7 then
+                ( week ++ [ day ], result )
+
+            else
+                ( [ day ], result ++ [ week ] )
+        )
+        ( [], [] )
+        days
+        |> (\( week, result ) -> result ++ [ week ])
+
+
+calendarMonthDays : Int -> Date.Month -> List Date
+calendarMonthDays year month =
     let
         beginningOfMonth =
             Date.fromCalendarDate year month 1
