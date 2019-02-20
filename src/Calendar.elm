@@ -1,15 +1,33 @@
-module Calendar exposing (monthdays)
+module Calendar exposing (forMonth)
 
 import Date exposing (Date)
 
 
-monthdays : Int -> Date.Month -> List Date
-monthdays year month =
+type alias CalendarMonth =
+    List Date
+
+
+forMonth : Int -> Date.Month -> CalendarMonth
+forMonth year month =
     let
-        start =
+        beginningOfMonth =
             Date.fromCalendarDate year month 1
 
+        start =
+            firstOfSameWeek beginningOfMonth
+
         until =
-            Date.add Date.Months 1 start
+            Date.add Date.Months 1 beginningOfMonth
+                |> lastOfSameWeek
     in
     Date.range Date.Day 1 start until
+
+
+firstOfSameWeek : Date -> Date
+firstOfSameWeek date =
+    Date.floor Date.Week date
+
+
+lastOfSameWeek : Date -> Date
+lastOfSameWeek date =
+    Date.ceiling Date.Week date
