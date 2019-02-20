@@ -4,7 +4,7 @@ import Browser
 import Calendar
 import Date exposing (Date)
 import Html exposing (Html, table, tbody, td, text, th, thead, tr)
-import Html.Attributes exposing (class)
+import Html.Attributes exposing (classList)
 import Task
 import Time
 
@@ -107,11 +107,11 @@ viewDates model =
         calendar =
             Calendar.forMonth (Date.year model.today) (Date.month model.today)
     in
-    viewCalendar calendar
+    viewCalendar calendar model.today
 
 
-viewCalendar : Calendar.CalendarMonth -> Html Msg
-viewCalendar calendar =
+viewCalendar : Calendar.CalendarMonth -> Date -> Html Msg
+viewCalendar calendar today =
     table []
         [ thead []
             [ tr []
@@ -128,15 +128,28 @@ viewCalendar calendar =
             (List.map
                 (\week ->
                     tr []
-                        (List.map viewCalendarDay week)
+                        (List.map
+                            (\day ->
+                                let
+                                    date =
+                                        Calendar.dateFromCalendarDate day
+                                in
+                                if date == today then
+                                    viewCalendarDay [ "today" ] day
+
+                                else
+                                    viewCalendarDay [] day
+                            )
+                            week
+                        )
                 )
                 calendar
             )
         ]
 
 
-viewCalendarDay : Calendar.CalendarDate -> Html Msg
-viewCalendarDay day =
+viewCalendarDay : List String -> Calendar.CalendarDate -> Html Msg
+viewCalendarDay extraClasses day =
     let
         ( dayClass, dayDate ) =
             case day of
@@ -149,6 +162,6 @@ viewCalendarDay day =
                 Calendar.Next date ->
                     ( "next", date )
     in
-    td [ class dayClass ]
+    td [ classList (List.map (\className -> ( className, True )) <| [ dayClass ] ++ extraClasses) ]
         [ text (String.fromInt <| Date.day dayDate)
         ]
