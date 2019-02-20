@@ -26,6 +26,7 @@ suite =
                                 ]
                     in
                     Calendar.forMonth 2019 Time.Feb
+                        |> List.map (\week -> List.map Calendar.dateFromCalendarDate week)
                         |> Expect.equal dates
             , test "generates correct date range for March 2019" <|
                 \_ ->
@@ -41,6 +42,7 @@ suite =
                                 ]
                     in
                     Calendar.forMonth 2019 Time.Mar
+                        |> List.map (\week -> List.map Calendar.dateFromCalendarDate week)
                         |> Expect.equal dates
             ]
         ]

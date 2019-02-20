@@ -1,10 +1,29 @@
-module Calendar exposing (forMonth)
+module Calendar exposing (CalendarDate(..), CalendarMonth, dateFromCalendarDate, forMonth)
 
 import Date exposing (Date)
 
 
 type alias CalendarMonth =
-    List (List Date)
+    List (List CalendarDate)
+
+
+type CalendarDate
+    = Current Date
+    | Previous Date
+    | Next Date
+
+
+dateFromCalendarDate : CalendarDate -> Date
+dateFromCalendarDate calendarDate =
+    case calendarDate of
+        Current date ->
+            date
+
+        Previous date ->
+            date
+
+        Next date ->
+            date
 
 
 forMonth : Int -> Date.Month -> CalendarMonth
@@ -26,7 +45,7 @@ forMonth year month =
         |> (\( week, result ) -> result ++ [ week ])
 
 
-calendarMonthDays : Int -> Date.Month -> List Date
+calendarMonthDays : Int -> Date.Month -> List CalendarDate
 calendarMonthDays year month =
     let
         beginningOfMonth =
@@ -35,11 +54,25 @@ calendarMonthDays year month =
         start =
             firstOfSameWeek beginningOfMonth
 
-        until =
+        untilEndOfMonth =
             Date.add Date.Months 1 beginningOfMonth
-                |> lastOfSameWeek
+
+        until =
+            lastOfSameWeek untilEndOfMonth
+
+        previous =
+            Date.range Date.Day 1 start beginningOfMonth
+                |> List.map Previous
+
+        current =
+            Date.range Date.Day 1 beginningOfMonth untilEndOfMonth
+                |> List.map Current
+
+        next =
+            Date.range Date.Day 1 untilEndOfMonth until
+                |> List.map Next
     in
-    Date.range Date.Day 1 start until
+    previous ++ current ++ next
 
 
 firstOfSameWeek : Date -> Date
