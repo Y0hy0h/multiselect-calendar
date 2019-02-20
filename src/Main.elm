@@ -107,6 +107,11 @@ viewDates model =
         calendar =
             Calendar.forMonth (Date.year model.today) (Date.month model.today)
     in
+    viewCalendar calendar
+
+
+viewCalendar : Calendar.CalendarMonth -> Html Msg
+viewCalendar calendar =
     table []
         [ thead []
             [ tr []
