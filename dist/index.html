@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Calendar</title>
+</head>
+
+<body>
+    <style>
+        td {
+            text-align: right;
+            border: none;
+        }
+
+        td.previous,
+        td.next {
+            color: gray;
+        }
+
+        td:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        td.today {
+            text-decoration: underline;
+        }
+
+        td.selected {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+    </style>
+
+    <div id="app"></div>
+    <textarea id="output" readonly autocomplete="off"></textarea>
+    <script src="/elm.js"></script>
+    <script>
+        const app = Elm.Main.init({ node: document.getElementById('app') })
+        const output = document.getElementById('output');
+        app.ports.selectedPort.subscribe(selected => {
+            output.value = selected.join(",\n");
+        })
+    </script>
+</body>
+
+</html>
