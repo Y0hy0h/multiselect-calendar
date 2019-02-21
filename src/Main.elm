@@ -1,4 +1,4 @@
-module Main exposing (main)
+port module Main exposing (main)
 
 import Browser
 import Calendar
@@ -6,6 +6,7 @@ import Date exposing (Date)
 import Html exposing (Html, button, div, table, tbody, td, text, th, thead, tr)
 import Html.Attributes exposing (classList)
 import Html.Events exposing (onClick)
+import Json.Encode as Encode
 import List.Extra as List
 import Task
 import Time
@@ -18,6 +19,16 @@ main =
         , update = update
         , subscriptions = subscriptions
         }
+
+
+sendSelected : List Date -> Cmd msg
+sendSelected selected =
+    List.map Date.toIsoString selected
+        |> Encode.list Encode.string
+        |> selectedPort
+
+
+port selectedPort : Encode.Value -> Cmd msg
 
 
 
@@ -102,21 +113,33 @@ updateDates msg model =
         CombinedActionMsg dateAction maybeMonthAction ->
             let
                 ( dateModel, dateCmd ) =
-                    case dateAction of
-                        Add newDate ->
-                            ( { model | selected = model.selected ++ [ newDate ] }, Cmd.none )
-
-                        Remove oldDate ->
-                            let
-                                newSelected =
-                                    List.remove oldDate model.selected
-                            in
-                            ( { model | selected = newSelected }, Cmd.none )
+                    updateSelection model dateAction
             in
             ( updateMonth maybeMonthAction dateModel, dateCmd )
 
         MonthActionMsg monthAction ->
             ( updateMonth (Just monthAction) model, Cmd.none )
+
+
+updateSelection : DatesModel -> DateAction -> ( DatesModel, Cmd Msg )
+updateSelection model action =
+    let
+        newModel =
+            case action of
+                Add newDate ->
+                    { model | selected = model.selected ++ [ newDate ] }
+
+                Remove oldDate ->
+                    let
+                        newSelected =
+                            List.remove oldDate model.selected
+                    in
+                    { model | selected = newSelected }
+
+        sortedModel =
+            { newModel | selected = List.sortBy Date.toIsoString newModel.selected }
+    in
+    ( sortedModel, sendSelected sortedModel.selected )
 
 
 updateMonth : Maybe MonthAction -> DatesModel -> DatesModel
