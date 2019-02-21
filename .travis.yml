@@ -1,7 +1,7 @@
 language: elm
 
 before_deploy:
-  - build.sh
+  - ./build.sh
 deploy:
   provider: pages
   skip-cleanup: true
