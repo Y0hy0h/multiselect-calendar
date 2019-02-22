@@ -7189,14 +7189,22 @@ var elm$html$Html$div = _VirtualDom_node('div');
 var author$project$Main$viewDates = function (model) {
 	return A2(
 		elm$html$Html$div,
-		_List_Nil,
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$class('calendar')
+			]),
 		_List_fromArray(
 			[
 				A2(
 				elm$html$Html$div,
-				_List_Nil,
 				_List_fromArray(
 					[
+						elm$html$Html$Attributes$class('container')
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text(
+						A2(justinmimbs$date$Date$format, 'MMMM y', model.u)),
 						A2(
 						elm$html$Html$button,
 						_List_fromArray(
@@ -7208,6 +7216,7 @@ var author$project$Main$viewDates = function (model) {
 							[
 								elm$html$Html$text('^')
 							])),
+						author$project$Main$viewCalendar(model),
 						A2(
 						elm$html$Html$button,
 						_List_fromArray(
@@ -7218,11 +7227,8 @@ var author$project$Main$viewDates = function (model) {
 						_List_fromArray(
 							[
 								elm$html$Html$text('v')
-							])),
-						elm$html$Html$text(
-						A2(justinmimbs$date$Date$format, 'MMMM y', model.u))
-					])),
-				author$project$Main$viewCalendar(model)
+							]))
+					]))
 			]));
 };
 var elm$virtual_dom$VirtualDom$map = _VirtualDom_map;
