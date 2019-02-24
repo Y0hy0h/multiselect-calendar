@@ -4,7 +4,7 @@ import Browser
 import Calendar
 import Date exposing (Date)
 import Html exposing (Html, button, div, table, tbody, td, text, th, thead, tr)
-import Html.Attributes exposing (class, classList)
+import Html.Attributes exposing (class, classList, type_)
 import Html.Events exposing (onClick)
 import Json.Encode as Encode
 import List.Extra as List
@@ -179,9 +179,9 @@ viewDates model =
     div [ class "calendar" ]
         [ div [ class "container" ]
             [ text (Date.format "MMMM y" model.month)
-            , button [ onClick (MonthActionMsg PreviousMonth) ] [ text "^" ]
+            , button [ onClick (MonthActionMsg PreviousMonth), type_ "button" ] [ text "^" ]
             , viewCalendar model
-            , button [ onClick (MonthActionMsg NextMonth) ] [ text "v" ]
+            , button [ onClick (MonthActionMsg NextMonth), type_ "button" ] [ text "v" ]
             ]
         ]
 
