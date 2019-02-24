@@ -7186,6 +7186,7 @@ var author$project$Main$viewCalendar = function (model) {
 };
 var elm$html$Html$button = _VirtualDom_node('button');
 var elm$html$Html$div = _VirtualDom_node('div');
+var elm$html$Html$Attributes$type_ = elm$html$Html$Attributes$stringProperty('type');
 var author$project$Main$viewDates = function (model) {
 	return A2(
 		elm$html$Html$div,
@@ -7210,7 +7211,8 @@ var author$project$Main$viewDates = function (model) {
 						_List_fromArray(
 							[
 								elm$html$Html$Events$onClick(
-								author$project$Main$MonthActionMsg(0))
+								author$project$Main$MonthActionMsg(0)),
+								elm$html$Html$Attributes$type_('button')
 							]),
 						_List_fromArray(
 							[
@@ -7222,7 +7224,8 @@ var author$project$Main$viewDates = function (model) {
 						_List_fromArray(
 							[
 								elm$html$Html$Events$onClick(
-								author$project$Main$MonthActionMsg(1))
+								author$project$Main$MonthActionMsg(1)),
+								elm$html$Html$Attributes$type_('button')
 							]),
 						_List_fromArray(
 							[
