@@ -1,0 +1,54 @@
+/* Layout */
+body {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.calendar {
+    display: inline-grid;
+    grid-template-columns: auto auto;
+    grid-gap: 1em;
+}
+
+.container {
+    display: inline-block;
+}
+
+.calendar-header {
+    display: flex;
+    flex-direction: column;
+}
+
+.selected-list > ul {
+    height: 100%;
+    overflow: auto;
+}
+
+/* Styling*/
+
+button.previous-month,
+button.next-month {
+    display: block;
+    width: 100%;
+}
+
+td {
+    text-align: right;
+    border: none;
+}
+
+td.previous,
+td.next {
+    color: gray;
+}
+
+td:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+td.today {
+    text-decoration: underline;
+}
+
+td.selected {
+    background-color: rgba(0, 0, 0, 0.2);
+}
