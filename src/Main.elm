@@ -3,7 +3,7 @@ port module Main exposing (main)
 import Browser
 import Calendar
 import Date exposing (Date)
-import Html exposing (Html, button, div, form, input, li, table, tbody, td, text, th, thead, tr, ul)
+import Html exposing (Html, a, button, div, form, input, li, table, tbody, td, text, th, thead, tr, ul)
 import Html.Attributes exposing (class, classList, type_, value)
 import Html.Events exposing (onClick, onInput, onSubmit)
 import Json.Encode as Encode
@@ -82,7 +82,7 @@ update msg model =
         SetToday prefilledDates todayDate ->
             ( Loaded
                 { today = todayDate
-                , month = Date.floor Date.Month todayDate
+                , month = monthFromDate todayDate
                 , selected = prefilledDates
                 , dateInput = ""
                 }
@@ -103,6 +103,7 @@ type DatesMsg
     = CombinedActionMsg DateAction (Maybe MonthAction)
     | MonthActionMsg MonthAction
     | GoToCurrentMonth
+    | GoToDate Date
     | DateInputChanged String
     | DateInputSubmitted
 
@@ -131,7 +132,10 @@ updateDates msg model =
             ( updateMonth (Just monthAction) model, Cmd.none )
 
         GoToCurrentMonth ->
-            ( { model | month = Date.floor Date.Month model.today }, Cmd.none )
+            ( { model | month = monthFromDate model.today }, Cmd.none )
+
+        GoToDate date ->
+            ( { model | month = monthFromDate date }, Cmd.none )
 
         DateInputChanged newDate ->
             ( { model | dateInput = newDate }, Cmd.none )
@@ -147,6 +151,11 @@ updateDates msg model =
 
                 Nothing ->
                     ( model, Cmd.none )
+
+
+monthFromDate : Date -> Date
+monthFromDate date =
+    Date.floor Date.Month date
 
 
 parseDate : String -> Maybe Date
@@ -345,7 +354,8 @@ viewDatesList currentInput dates =
     let
         viewDateListItem date =
             li []
-                [ text (Date.format "dd.MM.yyyy" date)
+                [ button [ class "goto-date", onClick (GoToDate date) ] [ text "Go to" ]
+                , text (Date.format "dd.MM.yyyy" date)
                 , button [ class "remove-date", onClick (CombinedActionMsg (Remove date) Nothing) ] [ text "Remove" ]
                 ]
     in
