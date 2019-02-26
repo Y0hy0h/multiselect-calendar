@@ -349,10 +349,10 @@ viewDatesList currentInput dates =
                 , button [ onClick (CombinedActionMsg (Remove date) Nothing) ] [ text "X" ]
                 ]
     in
-    div []
-        [ ul [] (List.map viewDateListItem dates)
-        , form [ onSubmit DateInputSubmitted ]
+    div [ class "selected-list" ]
+        [ form [ onSubmit DateInputSubmitted ]
             [ input [ type_ "date", onInput DateInputChanged, value currentInput ] []
             , Html.button [ type_ "submit" ] [ text "+" ]
             ]
+        , ul [] (List.map viewDateListItem dates)
         ]
