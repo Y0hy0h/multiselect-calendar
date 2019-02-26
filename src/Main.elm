@@ -3,11 +3,12 @@ port module Main exposing (main)
 import Browser
 import Calendar
 import Date exposing (Date)
-import Html exposing (Html, button, div, li, table, tbody, td, text, th, thead, tr, ul)
-import Html.Attributes exposing (class, classList, type_)
-import Html.Events exposing (onClick)
+import Html exposing (Html, button, div, form, input, li, table, tbody, td, text, th, thead, tr, ul)
+import Html.Attributes exposing (class, classList, type_, value)
+import Html.Events exposing (onClick, onInput, onSubmit)
 import Json.Encode as Encode
 import List.Extra as List
+import Parser exposing ((|.), (|=))
 import Task
 import Time
 
@@ -44,6 +45,7 @@ type alias DatesModel =
     { today : Date
     , month : Date
     , selected : List Date
+    , dateInput : String
     }
 
 
@@ -78,6 +80,7 @@ update msg model =
                 { today = todayDate
                 , month = Date.floor Date.Month todayDate
                 , selected = []
+                , dateInput = ""
                 }
             , Cmd.none
             )
@@ -96,6 +99,8 @@ type DatesMsg
     = CombinedActionMsg DateAction (Maybe MonthAction)
     | MonthActionMsg MonthAction
     | GoToCurrentMonth
+    | DateInputChanged String
+    | DateInputSubmitted
 
 
 type DateAction
@@ -123,6 +128,49 @@ updateDates msg model =
 
         GoToCurrentMonth ->
             ( { model | month = Date.floor Date.Month model.today }, Cmd.none )
+
+        DateInputChanged newDate ->
+            ( { model | dateInput = newDate }, Cmd.none )
+
+        DateInputSubmitted ->
+            case parseDate model.dateInput of
+                Just date ->
+                    let
+                        ( newModel, newCmd ) =
+                            updateSelection model (Add date)
+                    in
+                    ( { newModel | dateInput = "" }, newCmd )
+
+                Nothing ->
+                    ( model, Cmd.none )
+
+
+parseDate : String -> Maybe Date
+parseDate rawDate =
+    let
+        paddedInt =
+            Parser.succeed identity
+                |. Parser.chompWhile (\c -> c == '0')
+                |= Parser.int
+
+        month =
+            Parser.succeed Date.numberToMonth
+                |= paddedInt
+
+        date =
+            Parser.succeed Date.fromCalendarDate
+                |= paddedInt
+                |. Parser.symbol "."
+                |= month
+                |. Parser.symbol "."
+                |= paddedInt
+    in
+    case Date.fromIsoString rawDate of
+        Ok d ->
+            Just d
+
+        Err _ ->
+            Parser.run date rawDate |> Result.toMaybe
 
 
 updateSelection : DatesModel -> DateAction -> ( DatesModel, Cmd Msg )
@@ -202,7 +250,7 @@ viewDates model =
                 ]
                 [ text "v" ]
             ]
-        , ul [] (viewDatesList model.selected)
+        , viewDatesList model.dateInput model.selected
         ]
 
 
@@ -288,8 +336,8 @@ viewCalendarDay is day =
         ]
 
 
-viewDatesList : List Date -> List (Html DatesMsg)
-viewDatesList dates =
+viewDatesList : String -> List Date -> Html DatesMsg
+viewDatesList currentInput dates =
     let
         viewDateListItem date =
             li []
@@ -297,4 +345,10 @@ viewDatesList dates =
                 , button [ onClick (CombinedActionMsg (Remove date) Nothing) ] [ text "X" ]
                 ]
     in
-    List.map viewDateListItem dates
+    div []
+        [ ul [] (List.map viewDateListItem dates)
+        , form [ onSubmit DateInputSubmitted ]
+            [ input [ type_ "date", onInput DateInputChanged, value currentInput ] []
+            , Html.button [ type_ "submit" ] [ text "+" ]
+            ]
+        ]
