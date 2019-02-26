@@ -6415,55 +6415,42 @@ var author$project$Main$subscriptions = function (model) {
 var author$project$Main$Loaded = function (a) {
 	return {$: 1, a: a};
 };
-var author$project$Main$selectedPort = _Platform_outgoingPort('selectedPort', elm$core$Basics$identity);
-var elm$json$Json$Encode$list = F2(
-	function (func, entries) {
-		return _Json_wrap(
-			A3(
-				elm$core$List$foldl,
-				_Json_addEntry(func),
-				_Json_emptyArray(0),
-				entries));
-	});
-var elm$json$Json$Encode$string = _Json_wrap;
-var elm$core$String$left = F2(
-	function (n, string) {
-		return (n < 1) ? '' : A3(elm$core$String$slice, 0, n, string);
-	});
-var elm$core$String$cons = _String_cons;
-var elm$core$String$fromChar = function (_char) {
-	return A2(elm$core$String$cons, _char, '');
+var justinmimbs$date$Date$Month = 2;
+var elm$time$Time$Fri = 4;
+var elm$time$Time$Mon = 0;
+var elm$time$Time$Sat = 5;
+var elm$time$Time$Sun = 6;
+var elm$time$Time$Thu = 3;
+var elm$time$Time$Tue = 1;
+var elm$time$Time$Wed = 2;
+var justinmimbs$date$Date$weekdayToNumber = function (wd) {
+	switch (wd) {
+		case 0:
+			return 1;
+		case 1:
+			return 2;
+		case 2:
+			return 3;
+		case 3:
+			return 4;
+		case 4:
+			return 5;
+		case 5:
+			return 6;
+		default:
+			return 7;
+	}
 };
-var elm$core$Bitwise$and = _Bitwise_and;
-var elm$core$Bitwise$shiftRightBy = _Bitwise_shiftRightBy;
-var elm$core$String$repeatHelp = F3(
-	function (n, chunk, result) {
-		return (n <= 0) ? result : A3(
-			elm$core$String$repeatHelp,
-			n >> 1,
-			_Utils_ap(chunk, chunk),
-			(!(n & 1)) ? result : _Utils_ap(result, chunk));
+var justinmimbs$date$Date$daysSincePreviousWeekday = F2(
+	function (wd, date) {
+		return A2(
+			elm$core$Basics$modBy,
+			7,
+			(justinmimbs$date$Date$weekdayNumber(date) + 7) - justinmimbs$date$Date$weekdayToNumber(wd));
 	});
-var elm$core$String$repeat = F2(
-	function (n, chunk) {
-		return A3(elm$core$String$repeatHelp, n, chunk, '');
-	});
-var elm$core$String$padLeft = F3(
-	function (n, _char, string) {
-		return _Utils_ap(
-			A2(
-				elm$core$String$repeat,
-				n - elm$core$String$length(string),
-				elm$core$String$fromChar(_char)),
-			string);
-	});
-var elm$core$String$right = F2(
-	function (n, string) {
-		return (n < 1) ? '' : A3(
-			elm$core$String$slice,
-			-n,
-			elm$core$String$length(string),
-			string);
+var justinmimbs$date$Date$firstOfMonth = F2(
+	function (y, m) {
+		return (justinmimbs$date$Date$daysBeforeYear(y) + A2(justinmimbs$date$Date$daysBeforeMonth, y, m)) + 1;
 	});
 var justinmimbs$date$Date$monthToNumber = function (m) {
 	switch (m) {
@@ -6548,17 +6535,115 @@ var justinmimbs$date$Date$toCalendarDate = function (_n0) {
 	var date = justinmimbs$date$Date$toOrdinalDate(rd);
 	return A3(justinmimbs$date$Date$toCalendarDateHelp, date.bd, 0, date.aj);
 };
-var justinmimbs$date$Date$day = A2(
-	elm$core$Basics$composeR,
-	justinmimbs$date$Date$toCalendarDate,
-	function ($) {
-		return $.aw;
-	});
 var justinmimbs$date$Date$month = A2(
 	elm$core$Basics$composeR,
 	justinmimbs$date$Date$toCalendarDate,
 	function ($) {
 		return $.s;
+	});
+var justinmimbs$date$Date$monthToQuarter = function (m) {
+	return ((justinmimbs$date$Date$monthToNumber(m) + 2) / 3) | 0;
+};
+var justinmimbs$date$Date$quarter = A2(elm$core$Basics$composeR, justinmimbs$date$Date$month, justinmimbs$date$Date$monthToQuarter);
+var justinmimbs$date$Date$quarterToMonth = function (q) {
+	return justinmimbs$date$Date$numberToMonth((q * 3) - 2);
+};
+var justinmimbs$date$Date$floor = F2(
+	function (interval, date) {
+		var rd = date;
+		switch (interval) {
+			case 0:
+				return justinmimbs$date$Date$firstOfYear(
+					justinmimbs$date$Date$year(date));
+			case 1:
+				return A2(
+					justinmimbs$date$Date$firstOfMonth,
+					justinmimbs$date$Date$year(date),
+					justinmimbs$date$Date$quarterToMonth(
+						justinmimbs$date$Date$quarter(date)));
+			case 2:
+				return A2(
+					justinmimbs$date$Date$firstOfMonth,
+					justinmimbs$date$Date$year(date),
+					justinmimbs$date$Date$month(date));
+			case 3:
+				return rd - A2(justinmimbs$date$Date$daysSincePreviousWeekday, 0, date);
+			case 4:
+				return rd - A2(justinmimbs$date$Date$daysSincePreviousWeekday, 0, date);
+			case 5:
+				return rd - A2(justinmimbs$date$Date$daysSincePreviousWeekday, 1, date);
+			case 6:
+				return rd - A2(justinmimbs$date$Date$daysSincePreviousWeekday, 2, date);
+			case 7:
+				return rd - A2(justinmimbs$date$Date$daysSincePreviousWeekday, 3, date);
+			case 8:
+				return rd - A2(justinmimbs$date$Date$daysSincePreviousWeekday, 4, date);
+			case 9:
+				return rd - A2(justinmimbs$date$Date$daysSincePreviousWeekday, 5, date);
+			case 10:
+				return rd - A2(justinmimbs$date$Date$daysSincePreviousWeekday, 6, date);
+			default:
+				return date;
+		}
+	});
+var author$project$Main$monthFromDate = function (date) {
+	return A2(justinmimbs$date$Date$floor, 2, date);
+};
+var author$project$Main$selectedPort = _Platform_outgoingPort('selectedPort', elm$core$Basics$identity);
+var elm$json$Json$Encode$list = F2(
+	function (func, entries) {
+		return _Json_wrap(
+			A3(
+				elm$core$List$foldl,
+				_Json_addEntry(func),
+				_Json_emptyArray(0),
+				entries));
+	});
+var elm$json$Json$Encode$string = _Json_wrap;
+var elm$core$String$left = F2(
+	function (n, string) {
+		return (n < 1) ? '' : A3(elm$core$String$slice, 0, n, string);
+	});
+var elm$core$String$cons = _String_cons;
+var elm$core$String$fromChar = function (_char) {
+	return A2(elm$core$String$cons, _char, '');
+};
+var elm$core$Bitwise$and = _Bitwise_and;
+var elm$core$Bitwise$shiftRightBy = _Bitwise_shiftRightBy;
+var elm$core$String$repeatHelp = F3(
+	function (n, chunk, result) {
+		return (n <= 0) ? result : A3(
+			elm$core$String$repeatHelp,
+			n >> 1,
+			_Utils_ap(chunk, chunk),
+			(!(n & 1)) ? result : _Utils_ap(result, chunk));
+	});
+var elm$core$String$repeat = F2(
+	function (n, chunk) {
+		return A3(elm$core$String$repeatHelp, n, chunk, '');
+	});
+var elm$core$String$padLeft = F3(
+	function (n, _char, string) {
+		return _Utils_ap(
+			A2(
+				elm$core$String$repeat,
+				n - elm$core$String$length(string),
+				elm$core$String$fromChar(_char)),
+			string);
+	});
+var elm$core$String$right = F2(
+	function (n, string) {
+		return (n < 1) ? '' : A3(
+			elm$core$String$slice,
+			-n,
+			elm$core$String$length(string),
+			string);
+	});
+var justinmimbs$date$Date$day = A2(
+	elm$core$Basics$composeR,
+	justinmimbs$date$Date$toCalendarDate,
+	function ($) {
+		return $.aw;
 	});
 var justinmimbs$date$Date$monthNumber = A2(elm$core$Basics$composeR, justinmimbs$date$Date$month, justinmimbs$date$Date$monthToNumber);
 var justinmimbs$date$Date$ordinalDay = A2(
@@ -6581,17 +6666,6 @@ var justinmimbs$date$Date$padSignedInt = F2(
 				elm$core$String$fromInt(
 					elm$core$Basics$abs(_int))));
 	});
-var justinmimbs$date$Date$monthToQuarter = function (m) {
-	return ((justinmimbs$date$Date$monthToNumber(m) + 2) / 3) | 0;
-};
-var justinmimbs$date$Date$quarter = A2(elm$core$Basics$composeR, justinmimbs$date$Date$month, justinmimbs$date$Date$monthToQuarter);
-var elm$time$Time$Fri = 4;
-var elm$time$Time$Mon = 0;
-var elm$time$Time$Sat = 5;
-var elm$time$Time$Sun = 6;
-var elm$time$Time$Thu = 3;
-var elm$time$Time$Tue = 1;
-var elm$time$Time$Wed = 2;
 var justinmimbs$date$Date$numberToWeekday = function (wdn) {
 	var _n0 = A2(elm$core$Basics$max, 1, wdn);
 	switch (_n0) {
@@ -7219,77 +7293,6 @@ var author$project$Main$updateSelection = F2(
 	});
 var elm$core$Platform$Cmd$batch = _Platform_batch;
 var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
-var justinmimbs$date$Date$Month = 2;
-var justinmimbs$date$Date$weekdayToNumber = function (wd) {
-	switch (wd) {
-		case 0:
-			return 1;
-		case 1:
-			return 2;
-		case 2:
-			return 3;
-		case 3:
-			return 4;
-		case 4:
-			return 5;
-		case 5:
-			return 6;
-		default:
-			return 7;
-	}
-};
-var justinmimbs$date$Date$daysSincePreviousWeekday = F2(
-	function (wd, date) {
-		return A2(
-			elm$core$Basics$modBy,
-			7,
-			(justinmimbs$date$Date$weekdayNumber(date) + 7) - justinmimbs$date$Date$weekdayToNumber(wd));
-	});
-var justinmimbs$date$Date$firstOfMonth = F2(
-	function (y, m) {
-		return (justinmimbs$date$Date$daysBeforeYear(y) + A2(justinmimbs$date$Date$daysBeforeMonth, y, m)) + 1;
-	});
-var justinmimbs$date$Date$quarterToMonth = function (q) {
-	return justinmimbs$date$Date$numberToMonth((q * 3) - 2);
-};
-var justinmimbs$date$Date$floor = F2(
-	function (interval, date) {
-		var rd = date;
-		switch (interval) {
-			case 0:
-				return justinmimbs$date$Date$firstOfYear(
-					justinmimbs$date$Date$year(date));
-			case 1:
-				return A2(
-					justinmimbs$date$Date$firstOfMonth,
-					justinmimbs$date$Date$year(date),
-					justinmimbs$date$Date$quarterToMonth(
-						justinmimbs$date$Date$quarter(date)));
-			case 2:
-				return A2(
-					justinmimbs$date$Date$firstOfMonth,
-					justinmimbs$date$Date$year(date),
-					justinmimbs$date$Date$month(date));
-			case 3:
-				return rd - A2(justinmimbs$date$Date$daysSincePreviousWeekday, 0, date);
-			case 4:
-				return rd - A2(justinmimbs$date$Date$daysSincePreviousWeekday, 0, date);
-			case 5:
-				return rd - A2(justinmimbs$date$Date$daysSincePreviousWeekday, 1, date);
-			case 6:
-				return rd - A2(justinmimbs$date$Date$daysSincePreviousWeekday, 2, date);
-			case 7:
-				return rd - A2(justinmimbs$date$Date$daysSincePreviousWeekday, 3, date);
-			case 8:
-				return rd - A2(justinmimbs$date$Date$daysSincePreviousWeekday, 4, date);
-			case 9:
-				return rd - A2(justinmimbs$date$Date$daysSincePreviousWeekday, 5, date);
-			case 10:
-				return rd - A2(justinmimbs$date$Date$daysSincePreviousWeekday, 6, date);
-			default:
-				return date;
-		}
-	});
 var author$project$Main$updateDates = F2(
 	function (msg, model) {
 		switch (msg.$) {
@@ -7315,10 +7318,19 @@ var author$project$Main$updateDates = F2(
 					_Utils_update(
 						model,
 						{
-							s: A2(justinmimbs$date$Date$floor, 2, model.L)
+							s: author$project$Main$monthFromDate(model.L)
 						}),
 					elm$core$Platform$Cmd$none);
 			case 3:
+				var date = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							s: author$project$Main$monthFromDate(date)
+						}),
+					elm$core$Platform$Cmd$none);
+			case 4:
 				var newDate = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
@@ -7362,7 +7374,7 @@ var author$project$Main$update = F2(
 				author$project$Main$Loaded(
 					{
 						F: '',
-						s: A2(justinmimbs$date$Date$floor, 2, todayDate),
+						s: author$project$Main$monthFromDate(todayDate),
 						l: prefilledDates,
 						L: todayDate
 					}),
@@ -7819,9 +7831,12 @@ var author$project$Main$viewCalendar = function (model) {
 			]));
 };
 var author$project$Main$DateInputChanged = function (a) {
+	return {$: 4, a: a};
+};
+var author$project$Main$DateInputSubmitted = {$: 5};
+var author$project$Main$GoToDate = function (a) {
 	return {$: 3, a: a};
 };
-var author$project$Main$DateInputSubmitted = {$: 4};
 var elm$html$Html$div = _VirtualDom_node('div');
 var elm$html$Html$form = _VirtualDom_node('form');
 var elm$html$Html$input = _VirtualDom_node('input');
@@ -7891,6 +7906,18 @@ var author$project$Main$viewDatesList = F2(
 				_List_Nil,
 				_List_fromArray(
 					[
+						A2(
+						author$project$Main$button,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('goto-date'),
+								elm$html$Html$Events$onClick(
+								author$project$Main$GoToDate(date))
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('Go to')
+							])),
 						elm$html$Html$text(
 						A2(justinmimbs$date$Date$format, 'dd.MM.yyyy', date)),
 						A2(
