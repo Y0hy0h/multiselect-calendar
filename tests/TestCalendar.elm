@@ -25,6 +25,7 @@ suite =
                                 , ( ( 2019, Time.Feb, 18 ), ( 2019, Time.Feb, 24 ) )
                                 , ( ( 2019, Time.Feb, 25 ), ( 2019, Time.Mar, 3 ) )
                                 , ( ( 2019, Time.Mar, 4 ), ( 2019, Time.Mar, 10 ) )
+                                , ( ( 2019, Time.Mar, 11 ), ( 2019, Time.Mar, 17 ) )
                                 ]
                     in
                     Calendar.forMonth 2019 Time.Feb
@@ -43,6 +44,7 @@ suite =
                                 , ( ( 2019, Time.Mar, 18 ), ( 2019, Time.Mar, 24 ) )
                                 , ( ( 2019, Time.Mar, 25 ), ( 2019, Time.Mar, 31 ) )
                                 , ( ( 2019, Time.Apr, 1 ), ( 2019, Time.Apr, 7 ) )
+                                , ( ( 2019, Time.Apr, 8 ), ( 2019, Time.Apr, 14 ) )
                                 ]
                     in
                     Calendar.forMonth 2019 Time.Mar
