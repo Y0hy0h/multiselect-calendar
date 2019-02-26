@@ -3,7 +3,7 @@ port module Main exposing (main)
 import Browser
 import Calendar
 import Date exposing (Date)
-import Html exposing (Html, button, div, table, tbody, td, text, th, thead, tr)
+import Html exposing (Html, button, div, li, table, tbody, td, text, th, thead, tr, ul)
 import Html.Attributes exposing (class, classList, type_)
 import Html.Events exposing (onClick)
 import Json.Encode as Encode
@@ -202,6 +202,7 @@ viewDates model =
                 ]
                 [ text "v" ]
             ]
+        , ul [] (viewDatesList model.selected)
         ]
 
 
@@ -285,3 +286,15 @@ viewCalendarDay is day =
         ]
         [ text (String.fromInt <| Date.day dayDate)
         ]
+
+
+viewDatesList : List Date -> List (Html DatesMsg)
+viewDatesList dates =
+    let
+        viewDateListItem date =
+            li []
+                [ text (Date.format "dd.MM.yyyy" date)
+                , button [ onClick (CombinedActionMsg (Remove date) Nothing) ] [ text "X" ]
+                ]
+    in
+    List.map viewDateListItem dates
