@@ -5,51 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Calendar</title>
+
+    <link href="main.css" rel="stylesheet">
 </head>
 
 <body>
-    <style>
-        /* Layout */
-        .calendar {
-            display: flex;
-            flex-direction: row;
-        }
-
-        .container {
-            display: inline-block;
-        }
-
-        /* Styling*/
-
-        button.previous-month,
-        button.next-month {
-            display: block;
-            width: 100%;
-        }
-
-        td {
-            text-align: right;
-            border: none;
-        }
-
-        td.previous,
-        td.next {
-            color: gray;
-        }
-
-        td:hover {
-            background-color: rgba(0, 0, 0, 0.1);
-        }
-
-        td.today {
-            text-decoration: underline;
-        }
-
-        td.selected {
-            background-color: rgba(0, 0, 0, 0.2);
-        }
-    </style>
-
     <h1>Calendar</h1>
     <div id="app"></div>
 
