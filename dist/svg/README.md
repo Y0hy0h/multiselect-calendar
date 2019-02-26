@@ -1,0 +1,1 @@
+Material icons taken from https://material.io/tools/icons/.
