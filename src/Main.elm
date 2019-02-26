@@ -186,7 +186,6 @@ viewDates model =
                 [ button
                     [ class "today"
                     , onClick GoToCurrentMonth
-                    , type_ "button"
                     ]
                     [ text "This month" ]
                 , text (Date.format "MMMM y" model.month)
@@ -194,14 +193,12 @@ viewDates model =
             , button
                 [ class "previous-month"
                 , onClick (MonthActionMsg PreviousMonth)
-                , type_ "button"
                 ]
                 [ text "^" ]
             , viewCalendar model
             , button
                 [ class "next-month"
                 , onClick (MonthActionMsg NextMonth)
-                , type_ "button"
                 ]
                 [ text "v" ]
             ]
