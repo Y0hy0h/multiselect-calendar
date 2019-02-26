@@ -9,6 +9,24 @@
 
 <body>
     <style>
+        /* Layout */
+        .calendar {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .container {
+            display: inline-block;
+        }
+
+        /* Styling*/
+
+        button.previous-month,
+        button.next-month {
+            display: block;
+            width: 100%;
+        }
+
         td {
             text-align: right;
             border: none;
@@ -30,19 +48,12 @@
         td.selected {
             background-color: rgba(0, 0, 0, 0.2);
         }
-
-        div.container {
-            display: inline-block;
-        }
-
-        button.previous-month,
-        button.next-month {
-            display: block;
-            width: 100%;
-        }
     </style>
 
+    <h1>Calendar</h1>
     <div id="app"></div>
+
+    <h1>Output</h1>
     <textarea id="output" readonly autocomplete="off"></textarea>
     <script src="elm.js"></script>
     <script>
