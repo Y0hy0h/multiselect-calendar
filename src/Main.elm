@@ -86,7 +86,7 @@ update msg model =
                 , selected = prefilledDates
                 , dateInput = ""
                 }
-            , Cmd.none
+            , sendSelected prefilledDates
             )
 
         DatesMsg datesMsg ->
