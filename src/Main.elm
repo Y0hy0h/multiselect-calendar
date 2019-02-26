@@ -95,6 +95,7 @@ update msg model =
 type DatesMsg
     = CombinedActionMsg DateAction (Maybe MonthAction)
     | MonthActionMsg MonthAction
+    | GoToCurrentMonth
 
 
 type DateAction
@@ -119,6 +120,9 @@ updateDates msg model =
 
         MonthActionMsg monthAction ->
             ( updateMonth (Just monthAction) model, Cmd.none )
+
+        GoToCurrentMonth ->
+            ( { model | month = Date.floor Date.Month model.today }, Cmd.none )
 
 
 updateSelection : DatesModel -> DateAction -> ( DatesModel, Cmd Msg )
@@ -178,12 +182,35 @@ viewDates : DatesModel -> Html DatesMsg
 viewDates model =
     div [ class "calendar" ]
         [ div [ class "container" ]
-            [ text (Date.format "MMMM y" model.month)
-            , button [ onClick (MonthActionMsg PreviousMonth), type_ "button" ] [ text "^" ]
+            [ div []
+                [ button
+                    [ class "today"
+                    , onClick GoToCurrentMonth
+                    , type_ "button"
+                    ]
+                    [ text "This month" ]
+                , text (Date.format "MMMM y" model.month)
+                ]
+            , button
+                [ class "previous-month"
+                , onClick (MonthActionMsg PreviousMonth)
+                , type_ "button"
+                ]
+                [ text "^" ]
             , viewCalendar model
-            , button [ onClick (MonthActionMsg NextMonth), type_ "button" ] [ text "v" ]
+            , button
+                [ class "next-month"
+                , onClick (MonthActionMsg NextMonth)
+                , type_ "button"
+                ]
+                [ text "v" ]
             ]
         ]
+
+
+button : List (Html.Attribute DatesMsg) -> List (Html DatesMsg) -> Html DatesMsg
+button attributes contents =
+    Html.button (attributes ++ [ type_ "button" ]) contents
 
 
 viewCalendar : DatesModel -> Html DatesMsg
