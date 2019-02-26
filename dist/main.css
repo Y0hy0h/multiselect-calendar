@@ -16,19 +16,75 @@ body {
 .calendar-header {
     display: flex;
     flex-direction: column;
+    padding-bottom: 0.5em;
 }
 
-.selected-list > ul {
+.selected-list > form {
+    display: flex;
+    flex-direction: row;
+}
+
+.selected-list ul {
     height: 100%;
     overflow: auto;
 }
 
+.selected-list ul li {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    grid-gap: 0.5em;
+    align-items: center;
+}
+
 /* Styling*/
+
+button {
+    border: 1px solid black;
+}
+
+button:hover {
+    filter: brightness(90%)
+}
 
 button.previous-month,
 button.next-month {
     display: block;
     width: 100%;
+}
+
+button.previous-month {
+    background-image: url("svg/arrow-up.svg");
+}
+
+button.next-month {
+    background-image: url("svg/arrow-down.svg");
+}
+
+button.add-date {
+    background-image: url("svg/add.svg");
+    width: 2rem;
+}
+
+button.goto-date {
+    background-image: url("svg/calendar.svg");
+    width: 2rem;
+}
+
+button.remove-date {
+    background-image: url("svg/delete.svg");
+    width: 2rem;
+}
+
+button.previous-month,
+button.next-month,
+button.add-date,
+button.goto-date,
+button.remove-date {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    font-size: 0;
+    min-height: 1.5rem;
 }
 
 td {
