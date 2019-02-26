@@ -234,7 +234,7 @@ viewDates : DatesModel -> Html DatesMsg
 viewDates model =
     div [ class "calendar" ]
         [ div [ class "container" ]
-            [ div []
+            [ div [ class "calendar-header" ]
                 [ button
                     [ class "today"
                     , onClick GoToCurrentMonth
@@ -246,13 +246,13 @@ viewDates model =
                 [ class "previous-month"
                 , onClick (MonthActionMsg PreviousMonth)
                 ]
-                [ text "^" ]
+                [ text "Previous month" ]
             , viewCalendar model
             , button
                 [ class "next-month"
                 , onClick (MonthActionMsg NextMonth)
                 ]
-                [ text "v" ]
+                [ text "Next month" ]
             ]
         , viewDatesList model.dateInput model.selected
         ]
@@ -346,13 +346,13 @@ viewDatesList currentInput dates =
         viewDateListItem date =
             li []
                 [ text (Date.format "dd.MM.yyyy" date)
-                , button [ onClick (CombinedActionMsg (Remove date) Nothing) ] [ text "X" ]
+                , button [ class "remove-date", onClick (CombinedActionMsg (Remove date) Nothing) ] [ text "Remove" ]
                 ]
     in
     div [ class "selected-list" ]
         [ form [ onSubmit DateInputSubmitted ]
             [ input [ type_ "date", onInput DateInputChanged, value currentInput ] []
-            , Html.button [ type_ "submit" ] [ text "+" ]
+            , Html.button [ class "add-date", type_ "submit" ] [ text "Add date" ]
             ]
         , ul [] (List.map viewDateListItem dates)
         ]
