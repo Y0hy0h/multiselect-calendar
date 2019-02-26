@@ -49,9 +49,13 @@ type alias DatesModel =
     }
 
 
-init : () -> ( Model, Cmd Msg )
-init flags =
-    ( Loading, Task.perform SetToday Date.today )
+init : List String -> ( Model, Cmd Msg )
+init rawDates =
+    let
+        dates =
+            List.filterMap parseDate rawDates
+    in
+    ( Loading, Task.perform (SetToday dates) Date.today )
 
 
 
@@ -68,18 +72,18 @@ subscriptions model =
 
 
 type Msg
-    = SetToday Date
+    = SetToday (List Date) Date
     | DatesMsg DatesMsg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        SetToday todayDate ->
+        SetToday prefilledDates todayDate ->
             ( Loaded
                 { today = todayDate
                 , month = Date.floor Date.Month todayDate
-                , selected = []
+                , selected = prefilledDates
                 , dateInput = ""
                 }
             , Cmd.none

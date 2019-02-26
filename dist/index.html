@@ -46,7 +46,10 @@
     <textarea id="output" readonly autocomplete="off"></textarea>
     <script src="elm.js"></script>
     <script>
-        const app = Elm.Main.init({ node: document.getElementById('app') })
+        const app = Elm.Main.init({
+            node: document.getElementById('app'),
+            flags: ["2019-02-27", "2019-03-01"]
+        })
         const output = document.getElementById('output');
         app.ports.selectedPort.subscribe(selected => {
             output.value = selected.join(",\n");
